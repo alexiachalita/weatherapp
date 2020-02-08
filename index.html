@@ -32,7 +32,7 @@
                       
                             
                 <div class='search'>
-                 <h2><span>Search by a City</span></h2> <input id='companySearch' type="text" placeholder="Enter Company Name">
+                 <h2><span>Search by a City</span></h2> <input id='citySearch' type="text" placeholder="Enter City Name">
         
                  
                  <button class="pure-button pure-button-primary button-large" id='srchBtn'>Search</button>
@@ -40,7 +40,9 @@
                 <br>
 
                 <div class="columns">
-                        <div class="column tall-tile">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae molestiae magni eos quod eum, quis, corporis, aliquid animi odio ullam facere officiis. Repellendus sequi provident nisi exercitationem, fugit aliquid. Exercitationem? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempore commodi inventore dolores asperiores sed reiciendis sint veniam aliquam illo id? Fugit nam quae nobis laborum dolor officiis tenetur repellendus doloremque!</div>
+                        <div class="column tall-tile">
+                          <ul id="past-searches"></ul>
+                        </div>
 
                         <div class="column is-four-fifths "> 
                             
@@ -52,10 +54,9 @@
                                           </div>
                                           <div class="media-content">
                                             <div class="content">
-                                              <p>
-                                                <br>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                                              </p>
+                                              <div id="current-weather">
+                                                <p>Please Enter a City</p>
+                                              </div>
                                             </div>
                                             <nav class="level is-mobile">
                                               <div class="level-left">
@@ -79,34 +80,78 @@
                                           </div>
                                         </article>
                                       </div>  
+                                      <div class="box">
+                                        <div id="forecast-results">
+                            
+                                        </div>
+                                      </div>  
                             
                         </div>
                     
                       </div>
-
-                <div class='name'></div>
-                <div class='domainName'></div>
-                <div class='locations'></div>
-                <div class='stockexchange'></div>
-                <div class='stocksymbol'></div>
-                <div class='linkedin'></div>
-                <div class='description'></div>
-               
                 </div>
         </div>
                 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-                
+              
+
                 <script type="text/javascript">
+
+                  function getForecastWeather(city) {
+                    var APIKey = '8104978fa628cbf69b5cb277e885e2ad';
+                    var queryURL = `http://api.openweathermap.org/data/2.5/forecast?q=${city},us&units=imperial&APPID=${APIKey}`;
+                    $.ajax({
+                              url: queryURL,
+                              method: "GET"
+                            })
+                          .then(function (response) {
+                            console.log(response);
+                            // Log the resulting object
+                            var list = response.list.filter(function(inc, i){
+								if (i % 8 === 1) {
+								return inc;
+								}
+							});
+                            $("#forecast-results").html('');
+                            list.forEach(function(inc){
+								var forecast = `<div class="forecast-card">
+											<h3 class="forecast-date">${inc.dt_txt.split(' ')[0]}</h3>
+											<img src="http://openweathermap.org/img/wn/${inc.weather[0].icon}@2x.png" />
+											<p class="forecast-temp">Temp: 85.3</p>
+											<p class="forecast-humidity">Humidity: 45%</p>
+										  </div>`;
+								$("#forecast-results").append(forecast);
+                            });
+                          });
+                  };
+
+                  function getUV (lat,long) {
+                    var APIKey = '8104978fa628cbf69b5cb277e885e2ad';
+                    var queryURL = `http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${lat}&lon=${long}&cnt=1`;
+                    $.ajax({
+                              url: queryURL,
+                              method: "GET"
+                            })
+                          .then(function (response) {
+                          console.log(response);
+                            
+                          var uv = response[0].value;
+                          var uventry = `<p class="uv-index">UV Index: ${parseFloat(uv).toFixed(1)} </p>`;
+                          console.log(uventry);
+                          $("#current-weather").append(uventry);
+
+
+                          });
+                  }
+
+
                   $('#srchBtn').on('click', function () {
-                        // Crunchbase API Key
                         var APIKey = '8104978fa628cbf69b5cb277e885e2ad';
                         var name = '';
                         var name = $('#weatherSearch').val();
-                        console.log(name);
-                        // URL we need to query the crunchbase
-                        var queryURL = "http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID=" +
-                          "name=" + name + "&user_key=" + APIKey;
+                        var city = $('#citySearch').val();
+                        //console.log(name);
                         
+                        var queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${city},us&units=imperial&APPID=${APIKey}`;
                           // Here we run our AJAX call to the OpenWeatherMap API
                           $.ajax({
                               url: queryURL,
@@ -119,30 +164,24 @@
                             console.log(queryURL);
               
                             // Log the resulting object
-                            console.log(response);
-              
-                            // Transfer content to HTML
-                            $('.name').html("<h2>Company Name: " + response.data.items[0].properties.name + "</h2>");
-                            $('.domainName').text("Domain Name: " + response.data.items[0].properties.domain);
-                            $(".locations").text("Headquarter Location: " + response.data.items[0].properties.region_name + ', ' + response.data
-                              .items[0].properties.city_name);
-                            $('.stockexchange').text("Stock Exchange: " + response.data.items[0].properties.stock_exchange);
-                            $('.stocksymbol').text("Stock Symbol:" + response.data.items[0].properties.stock_symbol);
-                            $('.description').text("Description: " + response.data.items[0].properties.short_description);                            
-                            $('.linkedin').text("LinkedIn URL: " + response.data.items[0].properties.linkedin_url);                    
-                            $('.stocks').text("Stock Symbol:" + response.data.items[0].properties.stock_symbol);
-                                    
-                            //Log the data in the console
-                            console.log("Company Name: " + response.data.items[0].properties.name);
-                            console.log("Domain Name: " + response.data.items[0].properties.domain);
-                            console.log("Region: " + response.data.items[0].properties.region_name);
-                            console.log("City: " + response.data.items[0].properties.city_name);
-                            console.log("Stock Exchange: " + response.data.items[0].properties.stock_exchange);
-                            console.log("Stock Symbol: " + response.data.items[0].properties.stock_symbol);
-                            console.log("Description: " + response.data.items[0].properties.short_description);
-                            console.log("LinkedIn URL: " + response.data.items[0].properties.linkedin_url);
+                            var weatherImg = `http://openweathermap.org/img/wn/${response.weather[0].icon}@2x.png`
+                            var currentWeather = `<h1 class="city">${response.name} <img class="current-weather-icon" src="${weatherImg}"></img></h1>
+                                                  <h3 class="date">${new Date()}</h3>
+                                                <p class="temperature">Temperature: ${parseInt(response.main.temp)}</p>
+                                                <p class="humidity">Humidity:  ${parseInt(response.main.humidity)}</p>
+                                                <p class="wind-speed">Wind Speed: ${parseFloat(response.wind.speed).toFixed(1)} MPH</p>`
+
+                            $('#current-weather').html(currentWeather);
+                            var cityHistory = `<li>${response.name}</li>`;
+                            $("#past-searches").append(cityHistory);
+                            getForecastWeather(city);
+                            getUV(response.coord.lat,response.coord.lon);
+
+                      
                           });
                         });
+
+                        
                 </script>
                 </div>
               </body>

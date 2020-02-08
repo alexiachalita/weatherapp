@@ -1,10 +1,37 @@
-.tall-tile {
-background-color: gray;
-border: black 1px;
-}
+tall-tile {
+    background-color: gray;
+    border: black 1px;
+    }
+    
+    .is-four-fifths {
+    background-color: lightgray;
+    
+    
+    }
+    #forecast-results {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .forecast-card {
+        width: 150px;
+        background-color: blue;
+        color: white;
+        border-style: solid;
+        border-width: 4px;
+        border-color: lightblue;
 
-.is-four-fifths {
-background-color: lightgray;
+    }
+    
+    .forecast-card .forecast-date {
+        color: white;
+    }
+
+    .search {
+margin-left: 2%;
 
 
-}
+
+    }
+    
+    
