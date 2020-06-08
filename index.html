@@ -126,7 +126,7 @@
 
                   function getUV (lat,long) {
                     var APIKey = '8104978fa628cbf69b5cb277e885e2ad';
-                    var queryURL = `http://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${lat}&lon=${long}&cnt=1`;
+                    var queryURL = `https://api.openweathermap.org/data/2.5/uvi/forecast?appid=${APIKey}&lat=${lat}&lon=${long}&cnt=1`;
                     $.ajax({
                               url: queryURL,
                               method: "GET"
@@ -151,7 +151,7 @@
                         var city = $('#citySearch').val();
                         //console.log(name);
                         
-                        var queryURL = `http://api.openweathermap.org/data/2.5/weather?q=${city},us&units=imperial&APPID=${APIKey}`;
+                        var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city},us&units=imperial&APPID=${APIKey}`;
                           // Here we run our AJAX call to the OpenWeatherMap API
                           $.ajax({
                               url: queryURL,
